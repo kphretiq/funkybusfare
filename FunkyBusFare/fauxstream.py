@@ -15,6 +15,7 @@ class JSONList(object):
         """
         self.fh = open(path, "w")
         self.comma=comma()
+        self.bytecount = 0
 
     def __enter__(self):
         """
@@ -38,7 +39,9 @@ class JSONList(object):
         preceeding objects.
         Assure comma value is correctly set.
         """
-        self.fh.write("".join([next(self.comma), json.dumps(obj)]))
+        val = "".join([next(self.comma), json.dumps(obj)])
+        self.bytecount += len(val)
+        self.fh.write(val)
 
 def comma():
     """
