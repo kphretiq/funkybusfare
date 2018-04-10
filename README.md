@@ -9,3 +9,4 @@ Everything tested in python3 only.
 1. dump to postgres or other useful database
 1. use daemonize to listen
 1. find out from metro what the acceptable cycle for hitting the api is
+1. normalize timestamps to utc
