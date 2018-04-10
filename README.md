@@ -8,6 +8,7 @@ Everything tested in python3 only.
 # Setup
 1. clone this repo
 1. if you are not runing python 3, make a nice virtualenv and source it
+1. run ```pip install -r requirements.txt```
 1. run either ```./trip-updates``` or ```vehicle-positions```
 1. notice json files growing in directory
 1. kill process and note that json file is still properly formed.
