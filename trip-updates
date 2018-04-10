@@ -5,19 +5,21 @@ from google.protobuf import json_format
 from google.transit import gtfs_realtime_pb2
 from FunkyBusFare.protobuf_to_dict import protobuf_to_dict
 from FunkyBusFare.flattery import flatten
+from FunkyBusFare.fauxstream import JSONList
 
 def trip_updates(path):
     response = requests.get(path)
     feed = gtfs_realtime_pb2.FeedMessage()
     feed.ParseFromString(response.content)
-    for entity in feed.entity:
-        trip = flatten(protobuf_to_dict(entity))
-        stu = trip["stop_time_update"]
-        del trip["stop_time_update"]
-        for _d in stu:
-            val = trip
-            val.update(flatten(_d))
-            print(val)
+    with JSONList("trip-updates.json") as fh:
+        for entity in feed.entity:
+            trip = flatten(protobuf_to_dict(entity))
+            stu = trip["stop_time_update"]
+            del trip["stop_time_update"]
+            for _d in stu:
+                val = trip
+                val.update(flatten(_d))
+                fh.write(val)
 
 if __name__ == "__main__":
     TRIP_UPDATES = "http://developer.go-metro.com/TMGTFSRealTimeWebService/TripUpdate/TripUpdates.pb" 

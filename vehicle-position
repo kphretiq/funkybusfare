@@ -5,14 +5,16 @@ from google.protobuf import json_format
 from google.transit import gtfs_realtime_pb2
 from FunkyBusFare.protobuf_to_dict import protobuf_to_dict
 from FunkyBusFare.flattery import flatten
+from FunkyBusFare.fauxstream import JSONList
 
 def vehicle_position(path):
     response = requests.get(path)
     feed = gtfs_realtime_pb2.FeedMessage()
     feed.ParseFromString(response.content)
-    for entity in feed.entity:
-        foo = protobuf_to_dict(entity)
-        print(flatten(foo))
+    with JSONList("vehicle-position.json") as fh:
+        for entity in feed.entity:
+            foo = protobuf_to_dict(entity)
+            fh.write(flatten(foo))
 
 if __name__ == "__main__":
     VEHPOS = "http://developer.go-metro.com/TMGTFSRealTimeWebService/vehicle/VehiclePositions.pb"
