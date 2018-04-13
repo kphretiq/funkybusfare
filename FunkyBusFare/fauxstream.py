@@ -1,12 +1,16 @@
 import json
+import gzip
 """
 Write lists of json objects to a file without a lot of fuss.
+use GZ version for compression
 """
 
 class JSONList(object):
     """
     "Stream" json-serializable objects to a file as a json list-of-objects.
     """
+    openbracket = "[\n"
+    closebracket = "\n]"
     def __init__(self, path):
         """
         Create a file handle.
@@ -22,7 +26,7 @@ class JSONList(object):
         Upon entry signal, write our opening bracket and a newline.
         return self
         """
-        self.fh.write("[\n")
+        self.fh.write(self.openbracket)
         return self
 
     def __exit__(self, _type, value, traceback):
@@ -30,7 +34,7 @@ class JSONList(object):
         Upon exit singnal, write a newline and our closing bracket, then
         close file handle
         """
-        self.fh.write("\n]")
+        self.fh.write(self.closebracket)
         self.fh.close()
 
     def write(self, obj):
@@ -40,6 +44,35 @@ class JSONList(object):
         Assure comma value is correctly set.
         """
         val = "".join([next(self.comma), json.dumps(obj)])
+        self.bytecount += len(val)
+        self.fh.write(val)
+
+class JSONListGZ(JSONList):
+    """
+    "Stream" json-serializable objects to a gzipped file as a json
+    list-of-objects.
+    """
+
+    openbracket = "[\n".encode()
+    closebracket = "\n]".encode()
+
+    def __init__(self, path):
+        """
+        Create a file handle.
+        Create a blank "comma" object
+        Accepts path(str) output path
+        """
+        self.fh = gzip.open(path, "w")
+        self.comma=comma()
+        self.bytecount = 0
+
+    def write(self, obj):
+        """
+        Write a json-serialized object with a comma appearing at the end of any
+        preceeding objects.
+        Assure comma value is correctly set.
+        """
+        val = "".join([next(self.comma), json.dumps(obj)]).encode()
         self.bytecount += len(val)
         self.fh.write(val)
 

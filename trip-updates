@@ -1,8 +1,12 @@
 #!/usr/bin/env python
 
-from FunkyBusFare.streamreader import StreamReader
+from FunkyBusFare.streamwriter import StreamWriter
+from FunkyBusFare.dbwriter import TripUpdatesETL
 
 if __name__ == "__main__": 
     TRIP_UPDATES = "http://developer.go-metro.com/TMGTFSRealTimeWebService/TripUpdate/TripUpdates.pb"
-    streamreader = StreamReader(TRIP_UPDATES, "./")
-    streamreader.write()
+    #streamwriter = StreamWriter(TRIP_UPDATES, "./")
+    #streamwriter.write()
+
+    dbwriter = TripUpdatesETL(TRIP_UPDATES)
+    dbwriter.extract()

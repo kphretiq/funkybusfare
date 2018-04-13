@@ -6,15 +6,15 @@ from google.protobuf import json_format
 from google.transit import gtfs_realtime_pb2
 from FunkyBusFare.protobuf_to_dict import protobuf_to_dict
 from FunkyBusFare.flattery import flatten
-from FunkyBusFare.fauxstream import JSONList
+from FunkyBusFare.fauxstream import JSONListGZ
 
-class StreamReader(object):
+class StreamWriter(object):
     """
     constantly monitor metro api endpoint, writing data as a series of 
-    10M json files
+    compressed json files
     """
 
-    def __init__(self, url, outpath, bytecount=1000000):
+    def __init__(self, url, outpath, bytecount=10000000):
         self.url = url
         self.outpath = outpath
         self.bytecount = bytecount
@@ -40,9 +40,9 @@ class StreamReader(object):
         while True:
             uniq = str(uuid.uuid4())
             name = os.path.splitext(os.path.split(self.url)[1])[0]
-            outfile = "%s-%s.json"%(name, uniq)
+            outfile = "%s-%s.json.gz"%(name, uniq)
             filepath = os.path.join(self.outpath, outfile)
-            with JSONList(filepath) as fh:
+            with JSONListGZ(filepath) as fh:
                 while True:
                     fh.write(next(row))
                     if fh.bytecount >= self.bytecount:
