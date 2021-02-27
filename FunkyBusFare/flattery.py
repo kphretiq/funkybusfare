@@ -1,14 +1,15 @@
+"""
+Flattens nested dictionaries into list of tuples.
+"""
 try:
     from collections.abc import MutableMapping
 except ImportError:
     from collections import MutableMapping
-"""
-Flattens nested dictionaries.
-"""
+
 
 def flatten(obj):
     """
-    Flatten a dictionary 
+    Flatten a dictionary
     Accepts: dictionary
     Returns: dictionary
     >>> mydict = {"foo": {"bar": "bat", "baz": "quux"}, "quuz": [1, 2],}
@@ -26,6 +27,7 @@ def flatten(obj):
 
     return dict(flatter(obj))
 
+
 def flatter(obj):
     """
     recursively flatten a nested dictionary into a list of tuples
@@ -41,13 +43,15 @@ def flatter(obj):
         raise TypeError("Object must be a dictionary.")
 
     row = []
-    for k, v in obj.items():
-        if isinstance(v, MutableMapping):
-            row.extend(flatter(v))
+    for key, val in obj.items():
+        if isinstance(val, MutableMapping):
+            row.extend(flatter(val))
         else:
-            row.append((k, v))
+            row.append((key, val))
     return row
+
 
 if __name__ == "__main__":
     import doctest
+
     doctest.testmod()

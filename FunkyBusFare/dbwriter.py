@@ -2,7 +2,7 @@ import sys
 import datetime
 from pytz import timezone
 from FunkyBusFare.streamwriter import StreamWriter
-from FunkyBusFare.database import initialize, VehiclePositions
+from FunkyBusFare.models import initialize, VehiclePositions
 
 EASTERN = timezone("US/Eastern")
 
