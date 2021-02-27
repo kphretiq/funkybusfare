@@ -6,6 +6,7 @@ import uuid
 from FunkyBusFare.fauxstream import JSONListGZ
 from FunkyBusFare import get_positions
 
+
 class StreamWriter:
     """
     constantly monitor metro api endpoint, writing data as a series of
@@ -27,7 +28,7 @@ class StreamWriter:
         while True:
             uniq = str(uuid.uuid4())
             name = os.path.splitext(os.path.split(self.url)[1])[0]
-            outfile = "%s-%s.json.gz"%(name, uniq)
+            outfile = "%s-%s.json.gz" % (name, uniq)
             filepath = os.path.join(self.outpath, outfile)
             with JSONListGZ(filepath) as _fh:
                 while True:
