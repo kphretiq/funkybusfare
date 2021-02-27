@@ -6,4 +6,5 @@ crapholder
 .env
 *.pyc
 *.swp
+*.db
 .python-version

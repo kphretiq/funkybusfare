@@ -1,0 +1,20 @@
+#!/usr/bin/env python
+import os
+from pymongo import MongoClient
+from FunkyBusFare.mongowriter import VehiclePositionsMongo
+
+MONGO_AUTH = os.getenv("MONGO_AUTH")
+
+uri = "mongodb+srv://cluster0.l8hf0.mongodb.net/myFirstDatabase?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority"
+
+client = MongoClient(
+        uri,
+        tls=True,
+        tlsCertificateKeyFile=MONGO_AUTH,
+    )
+
+db = client["cincinnati"]
+collection = db["bus"]
+VEHPOS = "http://developer.go-metro.com/TMGTFSRealTimeWebService/vehicle/VehiclePositions.pb"
+streamwriter = VehiclePositionsMongo(VEHPOS, collection, sleep=60)
+streamwriter.write()
