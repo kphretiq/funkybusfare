@@ -1,4 +1,9 @@
 venv
+records
+crapholder
+.venv
+.envrc
 .env
 *.pyc
 *.swp
+.python-version
