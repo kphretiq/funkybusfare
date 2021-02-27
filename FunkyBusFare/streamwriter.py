@@ -1,16 +1,14 @@
+"""
+Write metro api data to compressed json files.
+"""
 import os
-import time
 import uuid
-import requests
-from google.protobuf import json_format
-from google.transit import gtfs_realtime_pb2
-from FunkyBusFare.protobuf_to_dict import protobuf_to_dict
-from FunkyBusFare.flattery import flatten
 from FunkyBusFare.fauxstream import JSONListGZ
+from FunkyBusFare import get_positions
 
-class StreamWriter(object):
+class StreamWriter:
     """
-    constantly monitor metro api endpoint, writing data as a series of 
+    constantly monitor metro api endpoint, writing data as a series of
     compressed json files
     """
 
@@ -19,31 +17,20 @@ class StreamWriter(object):
         self.outpath = outpath
         self.bytecount = bytecount
 
-    def get(self):
-        """
-        generator reading metro api endpoint
-        """
-        while True:
-            response = requests.get(self.url)
-            feed = gtfs_realtime_pb2.FeedMessage()
-            feed.ParseFromString(response.content)
-            for entity in feed.entity:
-                foo = protobuf_to_dict(entity)
-                yield flatten(foo)
-            time.sleep(5)
-
     def write(self):
         """
         write metro data to json file
         """
-        row = self.get()
+
+        row = get_positions(self.url)
+
         while True:
             uniq = str(uuid.uuid4())
             name = os.path.splitext(os.path.split(self.url)[1])[0]
             outfile = "%s-%s.json.gz"%(name, uniq)
             filepath = os.path.join(self.outpath, outfile)
-            with JSONListGZ(filepath) as fh:
+            with JSONListGZ(filepath) as _fh:
                 while True:
-                    fh.write(next(row))
-                    if fh.bytecount >= self.bytecount:
+                    _fh.write(next(row))
+                    if _fh.bytecount >= self.bytecount:
                         break
