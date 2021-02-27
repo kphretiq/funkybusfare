@@ -2,14 +2,14 @@
 """
 Read a huge csv file in chunks.
 """
-import sys
 from subprocess import Popen, PIPE
 
-class MultiRead(object):
+
+class MultiRead:
     """
-    Read a huge csv file in chunks. Provides generator "chunks", which is 
+    Read a huge csv file in chunks. Provides generator "chunks", which is
     for consumption by multiprocessing.Pool
-    
+
     >>> import os
     >>> import csv
     >>> import tempfile
@@ -48,9 +48,12 @@ class MultiRead(object):
 
     @property
     def header(self):
+        """
+        CSV file fieldnames.
+        """
         if not self._header:
-            with open(self.path, "r") as f:
-                self._header = [i.strip() for i in f.readline().split(",")]
+            with open(self.path, "r") as _fh:
+                self._header = [i.strip() for i in _fh.readline().split(",")]
         return self._header
 
     @property
@@ -69,10 +72,10 @@ class MultiRead(object):
 
     def _chunks(self):
         """
-        Generator yielding step, path, start, end and header values for 
+        Generator yielding step, path, start, end and header values for
         consumption by multiprocessing.Pool
         """
-        start = 1 # start on 1, since expect first row to be header
+        start = 1  # start on 1, since expect first row to be header
         end = self.limit
         steps = int((self.size / self.limit + 1) + 1)
 
@@ -80,7 +83,7 @@ class MultiRead(object):
         yield {
             "step": 0,
             "path": self.path,
-            "start": start, 
+            "start": start,
             "end": end,
             "header": self.header,
         }
@@ -98,6 +101,8 @@ class MultiRead(object):
                 "header": self.header,
             }
 
+
 if __name__ == "__main__":
     import doctest
+
     doctest.testmod()
