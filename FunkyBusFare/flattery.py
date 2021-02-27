@@ -1,4 +1,7 @@
-import collections
+try:
+    from collections.abc import MutableMapping
+except ImportError:
+    from collections import MutableMapping
 """
 Flattens nested dictionaries.
 """
@@ -39,7 +42,7 @@ def flatter(obj):
 
     row = []
     for k, v in obj.items():
-        if isinstance(v, collections.MutableMapping):
+        if isinstance(v, MutableMapping):
             row.extend(flatter(v))
         else:
             row.append((k, v))
